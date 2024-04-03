@@ -3,10 +3,8 @@ import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import DiscordProvider from "next-auth/providers/discord";
-import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/database";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -17,8 +15,9 @@ export const authOptions = {
     }),
     AzureADProvider({
       name: "Microsoft",
-      clientId: process.env.MICROSOFT_CLIENT_ID,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
+      clientId: process.env.AZURE_AD_CLIENT_ID,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+      tenantId: process.env.AZURE_AD_TENANT_ID,
     }),
     {
       id: "steam",
@@ -101,38 +100,33 @@ export const authOptions = {
       clientId: "whateveryouwant",
       clientSecret: process.env.STEAM_API,
     },
+
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID,
       clientSecret: process.env.DISCORD_CLIENT_SECRET,
     }),
     EmailProvider({
-      server: process.env.EMAIL_SERVER,
+      id: "email",
+      name: "Email",
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
       from: process.env.EMAIL_FROM,
       // maxAge: 24 * 60 * 60, // How long email links are valid for (default 24h)
     }),
-
-    // ...add more providers here
-    // Credentials({
-    //   name: "credentials",
-    //   credentials: {
-    //     email: { label: "Email", type: "text", placeholder: "smith@mail.com" },
-    //     password: { label: "Password", type: "password" },
-    //   },
-    //   async authorize(credentials) {
-    //     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, {
-    //       method: "POST",
-    //       body: JSON.stringify(credentials),
-    //       headers: { "Content-Type": "application/json" },
-    //     });
-    //     const user = await res.json();
-    //     if (res.ok && user) {
-    //       return user;
-    //     }
-    //     return null;
-    //   },
-    // }),
   ],
   adapter: PrismaAdapter(prisma),
+  session: {
+    strategy: "jwt",
+  },
+  pages: {
+    signIn: "/auth/signin",
+  },
 };
 
 export default NextAuth(authOptions);
