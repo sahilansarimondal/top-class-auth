@@ -3,9 +3,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Getting Started
 
 1,open the .env.example file
+
 2, read that and copy
+
 3, create a .env file in root directiory
+
 4, paste the copy of .env.example in .env file
+
 5, add credentials
 
 setup done;
