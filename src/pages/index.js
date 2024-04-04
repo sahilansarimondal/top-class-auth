@@ -10,7 +10,7 @@ export default function Home() {
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
     >
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <div className=" flex text-2xl justify-between">
+        <div className=" flex text-2xl justify-between lg:justify-between">
           <h2>Navbar</h2>
           <div>
             <LoginButton />
